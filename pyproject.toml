@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fauxreal"
+version = "0.1.0"
+description = "A powerful, declarative engine for generating dynamic, relational, and highly customizable fake datasets using a JSON schema."
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+authors = [
+    { name = "Author Name", email = "author@example.com" }
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "pandas>=1.0.0",
+    "faker>=10.0.0",
+    "python-dateutil",
+]
+
+[project.optional-dependencies]
+parquet = ["pyarrow", "fastparquet"]
+
+[project.urls]
+Homepage = "https://github.com/vatsa_codes/fauxreal"
+
+[project.scripts]
+fauxreal = "fauxreal.cli:main"

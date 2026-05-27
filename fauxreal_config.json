@@ -1,0 +1,387 @@
+{
+    "variable_generation_config": {
+        "description": "Comprehensive test of Variable Generation Engine (v1.0)",
+        "seed": 42,
+        "fixed_variables": [
+            {
+                "name": "system_environment",
+                "type": "string",
+                "value": "production"
+            },
+            {
+                "name": "feature_enabled",
+                "type": "boolean",
+                "value": true
+            },
+            {
+                "name": "max_connections",
+                "type": "int",
+                "value": 100
+            },
+            {
+                "name": "default_multiplier",
+                "type": "float",
+                "value": 1.5
+            },
+            {
+                "name": "supported_regions",
+                "type": "list",
+                "value": [
+                    "US",
+                    "EU",
+                    "AP"
+                ]
+            },
+            {
+                "name": "static_headers",
+                "type": "dict",
+                "value": {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                }
+            },
+            {
+                "name": "launch_date",
+                "type": "date",
+                "value": "2024-01-01T00:00:00Z"
+            }
+        ],
+        "dynamic_variables": [
+            {
+                "name": "user_age",
+                "type": "int",
+                "generation_rules": {
+                    "min": 18,
+                    "max": 80
+                }
+            },
+            {
+                "name": "transaction_amount",
+                "type": "float",
+                "generation_rules": {
+                    "distribution": "normal",
+                    "mean": 50.0,
+                    "std_dev": 15.0,
+                    "min": 1.0,
+                    "max": 5000.0,
+                    "decimal_places": 2
+                }
+            },
+            {
+                "name": "random_user_id",
+                "type": "string",
+                "generation_rules": {
+                    "format": "uuid"
+                }
+            },
+            {
+                "name": "transaction_status",
+                "type": "conditional",
+                "generation_rules": {
+                    "conditions": [
+                        {
+                            "eval": "{{transaction_amount}} > 80",
+                            "result": "REVIEW"
+                        },
+                        {
+                            "eval": "{{transaction_amount}} > 50",
+                            "result": "PENDING"
+                        }
+                    ],
+                    "default": "SUCCESS"
+                }
+            },
+            {
+                "name": "test_foreign_key",
+                "type": "foreign_key",
+                "generation_rules": {
+                    "dataframe": "transactions_df",
+                    "column": "id"
+                }
+            },
+            {
+                "name": "formatted_employee_id",
+                "type": "string",
+                "generation_rules": {
+                    "source": "integer",
+                    "min": 1,
+                    "max": 9999
+                }
+            },
+            {
+                "name": "customer_email",
+                "type": "faker",
+                "generation_rules": {
+                    "provider": "email"
+                }
+            },
+            {
+                "name": "customer_name",
+                "type": "faker",
+                "generation_rules": {
+                    "provider": "name"
+                }
+            },
+            {
+                "name": "account_category",
+                "type": "conditional",
+                "generation_rules": {
+                    "conditions": [
+                        { "eval": "{{user_age}} < 27", "result": "GenZ" },
+                        { "eval": "{{user_age}} < 43", "result": "Millennial" },
+                        { "eval": "{{user_age}} < 59", "result": "GenX" }
+                    ],
+                    "default": "Boomer"
+                }
+            },
+            {
+                "name": "transaction_receipt",
+                "type": "template",
+                "generation_rules": {
+                    "template": "Receipt for {{customer_name}}: A transaction of ${{transaction_amount_usd}} was {{transaction_status}} in the {{system_environment}} environment."
+                }
+            },
+            {
+                "name": "current_date_simple",
+                "type": "date",
+                "generation_rules": {
+                    "anchor_date": "today",
+                    "date_offset": "0 days",
+                    "time_offset": "0 minutes",
+                    "format": "YYYY-MM-DD",
+                    "include_timestamp": false,
+                    "timestamp_format": "HH:mm:ss",
+                    "timezone": "UTC"
+                }
+            },
+            {
+                "name": "future_appointment_time",
+                "type": "date",
+                "generation_rules": {
+                    "anchor_date": "today",
+                    "date_offset": "+7 days",
+                    "format": "YYYY-MM-DD",
+                    "time_offset": "0 minutes",
+                    "include_timestamp": true,
+                    "timestamp_format": "HH:mm:ss",
+                    "timezone": "UTC"
+                }
+            },
+            {
+                "name": "past_event_iso",
+                "type": "date",
+                "generation_rules": {
+                    "anchor_date": "today",
+                    "date_offset": "-1 month",
+                    "time_offset": "0 minutes",
+                    "format": "YYYY-MM-DD",
+                    "include_timestamp": true,
+                    "timestamp_format": "T00:00:00.000Z",
+                    "timezone": "UTC"
+                }
+            },
+            {
+                "name": "timestamp_iso",
+                "type": "date",
+                "generation_rules": {
+                    "anchor_date": "today",
+                    "date_offset": "0 days",
+                    "time_offset": "0 minutes",
+                    "format": "YYYY-MM-DD",
+                    "include_timestamp": true,
+                    "timestamp_format": "T12:00:00Z",
+                    "timezone": "UTC"
+                }
+            },
+            {
+                "name": "transaction_date_range",
+                "type": "date_range",
+                "generation_rules": {
+                    "start_anchor": "today",
+                    "start_offset": "-5 days",
+                    "end_anchor": "today",
+                    "end_offset": "-1 days",
+                    "step": "1 days",
+                    "skip_weekends": true,
+                    "format": "YYYY-MM-DD",
+                    "include_timestamp": false,
+                    "timezone": "EST"
+                }
+            }
+        ],
+        "transformations": [
+            {
+                "name": "transaction_amount_usd",
+                "ref": "transaction_amount",
+                "actions": [
+                    {
+                        "action": "cast_to_string"
+                    },
+                    {
+                        "action": "append",
+                        "value": " USD"
+                    }
+                ]
+            },
+            {
+                "name": "final_formatted_employee_id",
+                "ref": "formatted_employee_id",
+                "actions": [
+                    {
+                        "action": "cast_to_string"
+                    },
+                    {
+                        "action": "pad_left",
+                        "pad_character": "0",
+                        "target_length": 9
+                    }
+                ]
+            },
+            {
+                "name": "final_customer_email",
+                "ref": "customer_email",
+                "actions": [
+                    {
+                        "action": "lowercase"
+                    }
+                ]
+            }
+        ],
+        "composite_variables": [
+            {
+                "name": "user_identity_payload",
+                "count": 10,
+                "type": "dict",
+                "schema": {
+                    "user_id": {
+                        "ref": "random_user_id"
+                    },
+                    "age": {
+                        "ref": "user_age"
+                    },
+                    "environment": {
+                        "ref": "system_environment"
+                    },
+                    "created_at": {
+                        "ref": "timestamp_iso"
+                    }
+                }
+            },
+            {
+                "name": "line_item_payload",
+                "type": "list",
+                "count": 5,
+                "schema": {
+                    "ref": "transaction_amount"
+                }
+            },
+            {
+                "name": "profile_payload",
+                "type": "dict",
+                "count": 5,
+                "schema": {
+                    "user_id": {
+                        "ref": "random_user_id"
+                    },
+                    "line_items": {
+                        "ref": "line_item_payload"
+                    },
+                    "metadata": {
+                        "timestamp": {
+                            "ref": "timestamp_iso"
+                        }
+                    }
+                }
+            }
+        ],
+        "dataframes": [
+            {
+                "name": "transactions_df",
+                "count": 500,
+                "unique_combinations": [
+                    "env",
+                    "date"
+                ],
+                "columns": [
+                    {
+                        "name": "id",
+                        "ref": "random_user_id"
+                    },
+                    {
+                        "name": "customer_name",
+                        "ref": "customer_name"
+                    },
+                    {
+                        "name": "account_category",
+                        "ref": "account_category"
+                    },
+                    {
+                        "name": "receipt",
+                        "ref": "transaction_receipt"
+                    },
+                    {
+                        "name": "customer_email",
+                        "ref": "final_customer_email"
+                    },
+                    {
+                        "name": "env",
+                        "ref": "supported_regions"
+                    },
+                    {
+                        "name": "status",
+                        "ref": "transaction_status"
+                    },
+                    {
+                        "name": "date",
+                        "ref": "transaction_date_range"
+                    },
+                    {
+                        "name": "amount",
+                        "ref": "transaction_amount_usd"
+                    }
+                ]
+            },
+            {
+                "name": "orders_df",
+                "count": 5,
+                "columns": [
+                    {
+                        "name": "order_id",
+                        "ref": "random_user_id"
+                    },
+                    {
+                        "name": "transaction_fk",
+                        "ref": "test_foreign_key"
+                    },
+                    {
+                        "name": "amount",
+                        "ref": "transaction_amount"
+                    }
+                ]
+            }
+        ],
+        "exports": [
+            {
+                "type": "csv",
+                "ref": "orders_df",
+                "filepath": "output_orders.csv"
+            },
+            {
+                "type": "csv",
+                "ref": "transactions_df",
+                "filepath": "output_transactions.csv"
+            },
+            {
+                "type": "parquet",
+                "ref": "transactions_df",
+                "filepath": "output_transactions.parquet"
+            },
+            {
+                "type": "json",
+                "ref": "user_identity_payload",
+                "filepath": "output_users.json",
+                "indent": 4
+            }
+        ]
+    }
+}
