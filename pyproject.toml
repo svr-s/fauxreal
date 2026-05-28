@@ -4,13 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fauxreal"
-version = "0.1.0"
+version = "0.1.1"
 description = "A powerful, declarative engine for generating dynamic, relational, and highly customizable fake datasets using a JSON schema."
 readme = "README.md"
 requires-python = ">=3.8"
 license = { text = "MIT" }
 authors = [
-    { name = "Author Name", email = "author@example.com" }
+    { name = "Vatsa", email = "228140210+svr-s@users.noreply.github.com" }
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
