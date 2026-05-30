@@ -359,19 +359,6 @@ def generate_dynamic_value(var_def, current_store=None, dataframes=None):
                 curr_date += step
                 
             return dates
-        elif v_type == "faker":
-            if not FAKER_AVAILABLE:
-                logging.warning(f"Faker library is not installed. Returning placeholder for '{var_def.get('name')}'.")
-                return "faker_missing_placeholder"
-            
-            provider = rules.get("provider", "name")
-            kwargs = rules.get("kwargs", {})
-            try:
-                faker_func = getattr(fake, provider)
-                return faker_func(**kwargs)
-            except AttributeError:
-                logging.warning(f"Faker provider '{provider}' not found.")
-                return "unknown_faker_value"
         else:
             logging.warning(f"Unsupported dynamic variable type: {v_type}")
             return None
@@ -536,7 +523,7 @@ def generate(config_path="fauxreal_config.json", overrides=None, seed=None, targ
         targets (list): Optional list of variable names (strings) to return exclusively.
         
     Returns:
-        tuple|dict: If targets is None, returns the legacy tuple (fixed, dynamic, transformed, composites, dataframes).
+        tuple|dict: If targets is None, returns the legacy tuple (fixed, dynamic (includes faker), transformed, composites, dataframes).
                     If targets is provided, returns a single dictionary of {target_name: generated_value}.
     """
     config = load_config(config_path)
@@ -558,6 +545,7 @@ def generate(config_path="fauxreal_config.json", overrides=None, seed=None, targ
     store = {}
     
     fixed_vars = {}
+    faker_vars = {}
     dynamic_vars = {}
     transformed_vars = {}
     composites = {}
@@ -576,7 +564,29 @@ def generate(config_path="fauxreal_config.json", overrides=None, seed=None, targ
     store.update(fixed_vars)
     logging.info(f"Fixed variables loaded: {list(fixed_vars.keys())}")
     
-    # 2. Dynamic Variables
+    # 2. Faker Variables
+    for fk_var in config.get("faker_variables", []):
+        name = fk_var.get("name")
+        provider = fk_var.get("provider", "name")
+        kwargs = fk_var.get("kwargs", {})
+        
+        if not FAKER_AVAILABLE:
+            logging.warning(f"Faker library is not installed. Returning placeholder for '{name}'.")
+            val = "faker_missing_placeholder"
+        else:
+            try:
+                faker_func = getattr(fake, provider)
+                val = faker_func(**kwargs)
+            except AttributeError:
+                logging.warning(f"Faker provider '{provider}' not found.")
+                val = "unknown_faker_value"
+                
+        store[name] = val
+        faker_vars[name] = val
+    if faker_vars:
+        logging.info(f"Faker variables generated: {list(faker_vars.keys())}")
+    
+    # 3. Dynamic Variables
     for d_var in config.get("dynamic_variables", []):
         try:
             val = generate_dynamic_value(d_var, store)
@@ -717,4 +727,6 @@ def generate(config_path="fauxreal_config.json", overrides=None, seed=None, targ
     if targets is not None:
         return {target: store.get(target) for target in targets}
 
-    return fixed_vars, dynamic_vars, transformed_vars, composites, dataframes
+    # Merge faker_vars into dynamic_vars for backward compatibility in the 5-tuple
+    merged_dynamic = {**faker_vars, **dynamic_vars}
+    return fixed_vars, merged_dynamic, transformed_vars, composites, dataframes

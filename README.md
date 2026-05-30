@@ -144,13 +144,14 @@ The primary extraction engine.
 This document outlines the structure of the `fauxreal_config.json` file. The configuration drives the `fauxreal` pipeline, which operates through these core mechanisms:
 
 1. **Fixed Variables:** Static mappings of keys to values.
-2. **Dynamic Variables:** Rule-based generation (random numbers, strings, UUIDs, dates, etc.).
-3. **Transformations:** Post-processing actions applied to generated variables (e.g., padding, replacing, truncating).
-4. **Composite Variables:** Nested schemas (dicts, lists) that reference other generated variables.
-5. **DataFrames:** Tabular structures that cross-join combinations and map columns to variables.
-6. **Exports:** Automatically save DataFrames to CSVs and Composite payloads to JSON files.
-7. **Command Line Interface (CLI):** Dynamically execute and override configurations via terminal.
-8. **Python Usage:** Programmatic API to extract exact payloads or DataFrames in external scripts.
+2. **Faker Variables:** Direct hooks into the `Faker` library to generate random names, emails, IDs, text, etc.
+3. **Dynamic Variables:** Rule-based generation (random numbers, strings, UUIDs, dates, conditionals, etc.).
+4. **Transformations:** Post-processing actions applied to generated variables (e.g., padding, replacing, truncating).
+5. **Composite Variables:** Nested schemas (dicts, lists) that reference other generated variables.
+6. **DataFrames:** Tabular structures that cross-join combinations and map columns to variables.
+7. **Exports:** Automatically save DataFrames to CSVs and Composite payloads to JSON files.
+8. **Command Line Interface (CLI):** Dynamically execute and override configurations via terminal.
+9. **Python Usage:** Programmatic API to extract exact payloads or DataFrames in external scripts.
 
 ---
 
@@ -161,12 +162,13 @@ This document outlines the structure of the `fauxreal_config.json` file. The con
   "variable_generation_config": {
     "description": "Optional description",
     "seed": 42,
-    "fixed_variables": [],
-    "dynamic_variables": [],
-    "transformations": [],
-    "composite_variables": [],
-    "dataframes": [],
-    "exports": []
+    "fixed_variables": [...],
+    "faker_variables": [...],
+    "dynamic_variables": [...],
+    "transformations": [...],
+    "composite_variables": [...],
+    "dataframes": [...],
+    "exports": [...]
   }
 }
 ```
@@ -189,13 +191,12 @@ Variables generated dynamically at runtime based on specific rules.
 
 #### Common Fields
 - `name`: Reference name.
-- `type`: Data type. Must be one of: `"int"`, `"float"`, `"string"`, `"list"`, `"dict"`, `"date"`, `"date_range"`, `"choice"`, `"conditional"`, `"foreign_key"`, `"template"`, `"faker"`.
+- `type`: Data type. Must be one of: `"int"`, `"float"`, `"string"`, `"list"`, `"dict"`, `"date"`, `"date_range"`, `"choice"`, `"conditional"`, `"foreign_key"`, `"template"`.
 - `generation_rules`: Object containing type-specific parameters.
 
 #### Supported Variable Types Summary
 - **`int` / `float`**: Uniform or Gaussian random numbers clamped between bounds.
 - **`string`**: UUIDs, integers, or fully customized random strings.
-- **`faker`**: Highly realistic semantic data (names, emails, addresses) powered by `Faker`.
 - **`choice`**: Randomly selects an item from `options` based on `weights` (optional).
 - **`conditional`**: Evaluates conditions using mathematical `expression` strings with `{{variable}}` string interpolation. If a condition evaluates to `True`, returns `result`. Fallback is `default`.
 - **`date` / `date_range`**: Creates ISO date strings or arrays of dates using base anchors and offsets.
