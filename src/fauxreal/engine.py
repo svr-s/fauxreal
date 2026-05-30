@@ -1,4 +1,7 @@
 import json
+import json5
+import yaml
+import os
 import random
 import uuid
 import re
@@ -57,26 +60,30 @@ def _parse_expression(expr_str: str):
 
 def load_config(filepath):
     """
-    Loads and parses the JSON configuration file containing variable definitions.
+    Loads and parses the JSON, JSON5, or YAML configuration file containing variable definitions.
     
     Args:
-        filepath (str): The path to the JSON config file.
+        filepath (str): The path to the config file.
         
     Returns:
         dict: The parsed "variable_generation_config" dictionary.
     """
     try:
+        ext = os.path.splitext(filepath)[1].lower()
         with open(filepath, 'r') as f:
-            data = json.load(f)
+            if ext in ['.yaml', '.yml']:
+                data = yaml.safe_load(f)
+            elif ext == '.json5':
+                data = json5.load(f)
+            else:
+                data = json.load(f)
+                
             return data.get("variable_generation_config", {})
     except FileNotFoundError:
         logging.error(f"Configuration file not found: {filepath}")
         return {}
-    except json.JSONDecodeError as e:
-        logging.error(f"Failed to parse JSON config in {filepath}: {e}")
-        return {}
     except Exception as e:
-        logging.error(f"Unexpected error loading config: {e}")
+        logging.error(f"Unexpected error loading config {filepath}: {e}")
         return {}
 
 def generate_fixed(variables_def):
