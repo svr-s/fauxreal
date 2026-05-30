@@ -32,8 +32,9 @@ Import `generate` directly into your data pipeline or test suite:
 from fauxreal import generate
 
 # 1. Execute the pipeline and retrieve only exactly what you want
+# Supports .json, .json5, .yaml, and .yml configuration files!
 results = generate(
-    config_path="fauxreal_config.json", 
+    config_path="fauxreal_config.yaml", 
     targets=["system_environment", "user_identity_payload", "transactions_df"]
 )
 
@@ -51,7 +52,7 @@ You can run the engine directly from your terminal and dynamically override any 
 
 ```bash
 fauxreal \
-    --config fauxreal_config.json \
+    --config fauxreal_config.json5 \
     --override system_environment=staging \
     --override max_connections=999 \
     --seed 42
