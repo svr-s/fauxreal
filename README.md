@@ -1,13 +1,13 @@
 # Fauxreal
 
-A powerful, declarative engine for generating dynamic, relational, and highly customizable fake datasets using a JSON schema. It operates in distinct phases to weave static variables, dynamic fakes, transformations, and complex nested payloads seamlessly into Pandas DataFrames and JSON exports.
+A powerful, declarative synthetic data and API payload generation engine with relational integrity, nested JSON support and DataFrame exports. It operates in distinct phases to weave static variables, dynamic fakes, transformations, and complex nested payloads seamlessly into Pandas DataFrames and JSON exports.
 
 ## Features
 - **Deterministic Generation**: Supports strict seeding ensuring your mock datasets are identical across every CI/CD or testing run.
 - **Relational Integrity**: Automatically resolves Foreign Keys. DataFrames can sample primary keys generated in upstream DataFrames to ensure valid relationships.
 - **Cartesian Cross-Joins**: Easily generate every unique permutation of specified lists and inject them into DataFrames.
 - **Deep Nesting**: Construct complex nested JSON payloads (Composites) by injecting previously generated variables into leaf nodes.
-- **Conditional Logic**: Evaluate Python-style `eval` statements against current variables to conditionally generate values (e.g. `If amount > 80, result = REVIEW`).
+- **Conditional Logic**: Evaluate mathematical and boolean `expression` statements against current variables to conditionally generate values (e.g. `If amount > 80, result = REVIEW`).
 - **Data Transforms**: Apply string transformations sequentially (padding, truncating, regex replacements) directly within the schema.
 
 ## Requirements
@@ -196,7 +196,7 @@ Variables generated dynamically at runtime based on specific rules.
 - **`string`**: UUIDs, integers, or fully customized random strings.
 - **`faker`**: Highly realistic semantic data (names, emails, addresses) powered by `Faker`.
 - **`choice`**: Randomly selects an item from `options` based on `weights` (optional).
-- **`conditional`**: Evaluates conditions using Python-like `eval` strings with `{{variable}}` string interpolation. If a condition evaluates to `True`, returns `result`. Fallback is `default`.
+- **`conditional`**: Evaluates conditions using mathematical `expression` strings with `{{variable}}` string interpolation. If a condition evaluates to `True`, returns `result`. Fallback is `default`.
 - **`date` / `date_range`**: Creates ISO date strings or arrays of dates using base anchors and offsets.
 - **`template`**: Interpolates other variables into a string template using `{{variable_name}}` syntax.
 - **`foreign_key`**: Randomly samples a value from a previously generated DataFrame's column (requires `dataframe` and `column` attributes).
@@ -239,11 +239,11 @@ Dynamically constructs a string by injecting previously generated variables into
   "generation_rules": {
     "conditions": [
       {
-        "eval": "{{transaction_amount}} > 80",
+        "expression": "{{transaction_amount}} > 80",
         "result": "REVIEW"
       },
       {
-        "eval": "{{transaction_amount}} > 50",
+        "expression": "{{transaction_amount}} > 50",
         "result": "PENDING"
       }
     ],

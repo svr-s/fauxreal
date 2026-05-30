@@ -8,6 +8,8 @@ from datetime import datetime, timedelta
 import pandas as pd
 import itertools
 import zoneinfo
+import ast
+import operator
 
 try:
     from faker import Faker
@@ -17,6 +19,41 @@ except ImportError:
     FAKER_AVAILABLE = False
 
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+
+def _parse_expression(expr_str: str):
+    """Safely evaluates a boolean or mathematical expression string using an AST."""
+    allowed_operators = {
+        ast.Add: operator.add, ast.Sub: operator.sub,
+        ast.Mult: operator.mul, ast.Div: operator.truediv,
+        ast.Eq: operator.eq, ast.NotEq: operator.ne,
+        ast.Lt: operator.lt, ast.LtE: operator.le,
+        ast.Gt: operator.gt, ast.GtE: operator.ge,
+        ast.Not: operator.not_,
+    }
+
+    def _parse_node(node):
+        if isinstance(node, ast.Constant):
+            return node.value
+        elif isinstance(node, ast.BinOp):
+            return allowed_operators[type(node.op)](_parse_node(node.left), _parse_node(node.right))
+        elif isinstance(node, ast.UnaryOp):
+            return allowed_operators[type(node.op)](_parse_node(node.operand))
+        elif isinstance(node, ast.BoolOp):
+            if isinstance(node.op, ast.And):
+                return all(_parse_node(v) for v in node.values)
+            elif isinstance(node.op, ast.Or):
+                return any(_parse_node(v) for v in node.values)
+        elif isinstance(node, ast.Compare):
+            left = _parse_node(node.left)
+            for op, right in zip(node.ops, node.comparators):
+                if not allowed_operators[type(op)](left, _parse_node(right)):
+                    return False
+                left = _parse_node(right)
+            return True
+        else:
+            raise ValueError(f"Unsupported expression node: {type(node)}")
+
+    return _parse_node(ast.parse(expr_str, mode='eval').body)
 
 def load_config(filepath):
     """
@@ -207,8 +244,8 @@ def generate_dynamic_value(var_def, current_store=None, dataframes=None):
         elif v_type == "conditional":
             conditions = rules.get("conditions", [])
             for cond in conditions:
-                if "eval" in cond:
-                    eval_str = cond["eval"]
+                if "expression" in cond:
+                    expr_str = cond["expression"]
                     
                     def replacer(match):
                         var_name = match.group(1).strip()
@@ -216,14 +253,13 @@ def generate_dynamic_value(var_def, current_store=None, dataframes=None):
                             return str(current_store[var_name])
                         return match.group(0)
                         
-                    resolved_str = re.sub(r'\{\{(.*?)\}\}', replacer, eval_str)
+                    resolved_str = re.sub(r'\{\{(.*?)\}\}', replacer, expr_str)
                     
                     try:
-                        # Safely evaluate the interpolated string
-                        if eval(resolved_str, {"__builtins__": {}}, {}):
+                        if _parse_expression(resolved_str):
                             return cond.get("result")
                     except Exception as e:
-                        logging.debug(f"Eval failed for '{resolved_str}': {e}")
+                        logging.debug(f"Expression evaluation failed for '{resolved_str}': {e}")
                 else:
                     # Legacy support for single-source conditions
                     source_name = rules.get("source")

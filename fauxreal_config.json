@@ -80,11 +80,11 @@
                 "generation_rules": {
                     "conditions": [
                         {
-                            "eval": "{{transaction_amount}} > 80",
+                            "expression": "{{transaction_amount}} > 80",
                             "result": "REVIEW"
                         },
                         {
-                            "eval": "{{transaction_amount}} > 50",
+                            "expression": "{{transaction_amount}} > 50",
                             "result": "PENDING"
                         }
                     ],
@@ -127,9 +127,9 @@
                 "type": "conditional",
                 "generation_rules": {
                     "conditions": [
-                        { "eval": "{{user_age}} < 27", "result": "GenZ" },
-                        { "eval": "{{user_age}} < 43", "result": "Millennial" },
-                        { "eval": "{{user_age}} < 59", "result": "GenX" }
+                        { "expression": "{{user_age}} < 27", "result": "GenZ" },
+                        { "expression": "{{user_age}} < 43", "result": "Millennial" },
+                        { "expression": "{{user_age}} < 59", "result": "GenX" }
                     ],
                     "default": "Boomer"
                 }
