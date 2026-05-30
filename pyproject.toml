@@ -27,7 +27,7 @@ dependencies = [
 parquet = ["pyarrow", "fastparquet"]
 
 [project.urls]
-Homepage = "https://github.com/vatsa_codes/fauxreal"
+Homepage = "https://github.com/svr-s/fauxreal"
 
 [project.scripts]
 fauxreal = "fauxreal.cli:main"
