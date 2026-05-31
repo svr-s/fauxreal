@@ -8,37 +8,43 @@
                     "type": "string"
                 },
                 "type": {
-                    "description": "The structure type ('dict' or 'list')",
+                    "description": "The structure type",
+                    "enum": [
+                        "dict",
+                        "list"
+                    ],
                     "title": "Type",
                     "type": "string"
                 },
-                "fields": {
+                "count": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Number of items to generate if type is list",
+                    "title": "Count"
+                },
+                "schema": {
                     "anyOf": [
                         {
                             "additionalProperties": true,
                             "type": "object"
                         },
                         {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "The dictionary structure containing variable references",
-                    "title": "Fields"
-                },
-                "items": {
-                    "anyOf": [
-                        {
-                            "items": {},
-                            "type": "array"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
                     "default": null,
-                    "description": "The list structure containing variable references",
-                    "title": "Items"
+                    "description": "The structure containing variable references",
+                    "title": "Schema"
                 }
             },
             "required": [
@@ -113,8 +119,7 @@
                     "anyOf": [
                         {
                             "items": {
-                                "additionalProperties": true,
-                                "type": "object"
+                                "type": "string"
                             },
                             "type": "array"
                         },
@@ -141,7 +146,20 @@
                     "type": "string"
                 },
                 "type": {
-                    "description": "The dynamic type (int, float, string, list, dict, date, date_range, choice, conditional, foreign_key, template)",
+                    "description": "The dynamic type",
+                    "enum": [
+                        "int",
+                        "float",
+                        "string",
+                        "list",
+                        "dict",
+                        "date",
+                        "date_range",
+                        "choice",
+                        "conditional",
+                        "foreign_key",
+                        "template"
+                    ],
                     "title": "Type",
                     "type": "string"
                 },
@@ -163,7 +181,12 @@
             "properties": {
                 "type": {
                     "default": "csv",
-                    "description": "The export format ('csv', 'parquet', 'json')",
+                    "description": "The export format",
+                    "enum": [
+                        "csv",
+                        "parquet",
+                        "json"
+                    ],
                     "title": "Type",
                     "type": "string"
                 },
@@ -259,7 +282,16 @@
                     "type": "string"
                 },
                 "type": {
-                    "description": "The data type (string, int, float, boolean, list, dict, date)",
+                    "description": "The data type",
+                    "enum": [
+                        "string",
+                        "int",
+                        "float",
+                        "boolean",
+                        "list",
+                        "dict",
+                        "date"
+                    ],
                     "title": "Type",
                     "type": "string"
                 },
@@ -278,10 +310,36 @@
         },
         "Transformation": {
             "properties": {
-                "target": {
-                    "description": "The name of the generated variable to transform",
-                    "title": "Target",
+                "name": {
+                    "description": "The name to save the transformed variable as",
+                    "title": "Name",
                     "type": "string"
+                },
+                "ref": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The variable to transform (alias for source)",
+                    "title": "Ref"
+                },
+                "source": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The variable to transform",
+                    "title": "Source"
                 },
                 "actions": {
                     "description": "List of actions to apply sequentially",
@@ -293,7 +351,7 @@
                 }
             },
             "required": [
-                "target",
+                "name",
                 "actions"
             ],
             "title": "Transformation",
@@ -303,7 +361,13 @@
             "additionalProperties": true,
             "properties": {
                 "action": {
-                    "description": "The transformation action to perform (e.g. pad, truncate, replace, cast_to_string)",
+                    "description": "The transformation action to perform",
+                    "enum": [
+                        "pad",
+                        "truncate",
+                        "replace",
+                        "cast_to_string"
+                    ],
                     "title": "Action",
                     "type": "string"
                 },
@@ -518,13 +582,13 @@
         }
     },
     "properties": {
-        "variable_generation_config": {
+        "fauxreal_config": {
             "$ref": "#/$defs/VariableGenerationConfig",
             "description": "The root configuration block"
         }
     },
     "required": [
-        "variable_generation_config"
+        "fauxreal_config"
     ],
     "title": "FauxrealConfig",
     "type": "object"

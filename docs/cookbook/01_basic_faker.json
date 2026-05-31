@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/svr-s/fauxreal/main/fauxreal-schema.json",
-  "variable_generation_config": {
+  "fauxreal_config": {
     "description": "Basic faker example",
     "faker_variables": [
       {

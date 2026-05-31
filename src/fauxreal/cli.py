@@ -8,7 +8,7 @@ from fauxreal.engine import generate
 def generate_init_config():
     example_config = {
         "$schema": "https://raw.githubusercontent.com/svr-s/fauxreal/main/fauxreal-schema.json",
-        "variable_generation_config": {
+        "fauxreal_config": {
             "description": "Auto-generated example configuration for Fauxreal",
             "seed": 12345,
             "fixed_variables": [

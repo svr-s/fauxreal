@@ -1,19 +1,48 @@
 import React, { useState } from 'react';
 import Form from '@rjsf/core';
 import validator from '@rjsf/validator-ajv8';
-import { Download, Code2, Database, GitBranch } from 'lucide-react';
+import { Download, GitBranch, Code2, Database } from 'lucide-react';
 import Editor from '@monaco-editor/react';
 
 import rawSchema from './schema.json';
+import { CustomFieldTemplate, CustomObjectFieldTemplate, CustomArrayFieldTemplate } from './templates';
 
-const { $defs, ...restSchema } = rawSchema;
+// Recursive function to strip {type: "null"} from anyOf arrays in the schema
+// This prevents RJSF from rendering annoying "Option 1 / Option 2" dropdowns for Optional fields.
+function stripNullTypes(obj) {
+  if (Array.isArray(obj)) {
+    return obj.map(stripNullTypes);
+  } else if (obj !== null && typeof obj === 'object') {
+    const newObj = {};
+    for (const [key, value] of Object.entries(obj)) {
+      if (key === 'anyOf' && Array.isArray(value)) {
+        // Filter out the null types
+        const filtered = value.filter(item => item.type !== 'null');
+        if (filtered.length === 1) {
+          // If only one type is left, just merge it into the object instead of using anyOf
+          Object.assign(newObj, stripNullTypes(filtered[0]));
+        } else {
+          newObj[key] = stripNullTypes(filtered);
+        }
+      } else {
+        newObj[key] = stripNullTypes(value);
+      }
+    }
+    return newObj;
+  }
+  return obj;
+}
+
+const cleanedSchema = stripNullTypes(rawSchema);
+const { $defs, ...restSchema } = cleanedSchema;
+
 const schema = {
   type: "object",
   $defs: $defs,
   properties: {
-    variable_generation_config: restSchema
+    fauxreal_config: restSchema
   },
-  required: ["variable_generation_config"]
+  required: ["fauxreal_config"]
 };
 
 function App() {
@@ -34,7 +63,7 @@ function App() {
       const parsed = JSON.parse(value);
       setFormData(parsed);
     } catch (e) {
-      // Don't update form data if JSON is invalid while typing
+      // Ignore parse errors while typing
     }
   };
 
@@ -73,7 +102,7 @@ function App() {
       {/* Main Content */}
       <main className="flex-1 flex overflow-hidden">
         {/* Left Pane - Form */}
-        <div className="w-1/2 overflow-y-auto p-6 border-r border-[var(--color-border)]">
+        <div className="w-1/2 overflow-y-auto p-6 border-r border-[var(--color-border)] form-container">
           <div className="glass-panel p-6 max-w-3xl mx-auto">
             <div className="mb-6 border-b border-[var(--color-border)] pb-4">
               <h2 className="text-lg font-semibold text-white flex items-center gap-2">
@@ -92,6 +121,11 @@ function App() {
               onChange={(e) => setFormData(e.formData)}
               liveValidate
               showErrorList={false}
+              templates={{
+                FieldTemplate: CustomFieldTemplate,
+                ObjectFieldTemplate: CustomObjectFieldTemplate,
+                ArrayFieldTemplate: CustomArrayFieldTemplate
+              }}
             >
               <button type="submit" className="hidden">Submit</button>
             </Form>

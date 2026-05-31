@@ -74,7 +74,7 @@ def load_config(filepath):
         filepath (str): The path to the config file.
         
     Returns:
-        dict: The parsed "variable_generation_config" dictionary.
+        dict: The parsed "fauxreal_config" dictionary.
     """
     try:
         ext = os.path.splitext(filepath)[1].lower()
@@ -90,12 +90,12 @@ def load_config(filepath):
                 try:
                     # Validate the raw data using Pydantic
                     validated_model = FauxrealConfig(**data)
-                    return validated_model.variable_generation_config.model_dump(exclude_none=True, by_alias=True)
+                    return validated_model.fauxreal_config.model_dump(exclude_none=True, by_alias=True)
                 except ValidationError as ve:
                     logging.error(f"Configuration Validation Error in {filepath}:\n{ve}")
                     raise
             
-            return data.get("variable_generation_config", {})
+            return data.get("fauxreal_config", {})
     except FileNotFoundError:
         logging.error(f"Configuration file not found: {filepath}")
         return {}
