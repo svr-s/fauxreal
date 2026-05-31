@@ -1,6 +1,15 @@
 import React from 'react';
 import { Plus, X, ChevronDown, ChevronRight } from 'lucide-react';
 
+const typeColors = {
+  string: 'bg-blue-500/20 text-blue-300 border-blue-500/30',
+  integer: 'bg-green-500/20 text-green-300 border-green-500/30',
+  number: 'bg-green-500/20 text-green-300 border-green-500/30',
+  boolean: 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30',
+  array: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
+  object: 'bg-pink-500/20 text-pink-300 border-pink-500/30',
+};
+
 export const CustomFieldTemplate = (props) => {
   const { id, classNames, label, help, required, description, errors, children, schema } = props;
   
@@ -16,14 +25,20 @@ export const CustomFieldTemplate = (props) => {
     );
   }
 
+  const typeBadge = schema.type ? (
+    <span className={`ml-2 px-1.5 py-0.5 rounded text-[9px] uppercase font-bold tracking-wider border ${typeColors[schema.type] || 'bg-gray-500/20 text-gray-300 border-gray-500/30'}`}>
+      {schema.type}
+    </span>
+  ) : null;
+
   return (
-    <div className={`form-group flex flex-col sm:flex-row sm:items-center mb-4 group ${classNames}`}>
-      <div className="sm:w-1/3 pr-4 mb-1 sm:mb-0">
-        <label htmlFor={id} className="block text-sm font-medium text-[var(--color-text-main)] group-focus-within:text-[var(--color-primary)] transition-colors">
+    <div className={`form-group flex flex-col sm:flex-row sm:items-start mb-5 group ${classNames}`}>
+      <div className="sm:w-1/3 pr-4 pt-2 mb-1 sm:mb-0 flex flex-col justify-start">
+        <label htmlFor={id} className="flex flex-wrap items-center text-sm font-medium text-[var(--color-text-main)] group-focus-within:text-[var(--color-primary)] transition-colors leading-tight">
           {label}
+          {typeBadge}
           {required && <span className="text-red-500 ml-1" title="Required">*</span>}
         </label>
-        {description && <div className="text-xs text-[var(--color-text-muted)] mt-1">{description}</div>}
       </div>
       <div className="sm:w-2/3 relative flex-1">
         {children}
@@ -31,6 +46,11 @@ export const CustomFieldTemplate = (props) => {
           <span className="absolute right-3 top-2.5 text-xs text-gray-500 pointer-events-none opacity-50">
             optional
           </span>
+        )}
+        {description && (
+          <div className="text-[11px] text-[var(--color-text-muted)] mt-1.5 ml-1 leading-snug">
+            {description}
+          </div>
         )}
         {errors}
         {help}

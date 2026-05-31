@@ -7,11 +7,10 @@ import Editor from '@monaco-editor/react';
 import rawSchema from './schema.json';
 import { CustomFieldTemplate, CustomObjectFieldTemplate, CustomArrayFieldTemplate } from './templates';
 
-// Recursive function to strip {type: "null"} from anyOf arrays in the schema
-// This prevents RJSF from rendering annoying "Option 1 / Option 2" dropdowns for Optional fields.
-function stripNullTypes(obj) {
+// Recursive function to clean up the schema
+function cleanSchema(obj) {
   if (Array.isArray(obj)) {
-    return obj.map(stripNullTypes);
+    return obj.map(cleanSchema);
   } else if (obj !== null && typeof obj === 'object') {
     const newObj = {};
     for (const [key, value] of Object.entries(obj)) {
@@ -20,24 +19,35 @@ function stripNullTypes(obj) {
         const filtered = value.filter(item => item.type !== 'null');
         if (filtered.length === 1) {
           // If only one type is left, just merge it into the object instead of using anyOf
-          Object.assign(newObj, stripNullTypes(filtered[0]));
+          Object.assign(newObj, cleanSchema(filtered[0]));
         } else {
-          newObj[key] = stripNullTypes(filtered);
+          newObj[key] = cleanSchema(filtered);
         }
       } else {
-        newObj[key] = stripNullTypes(value);
+        newObj[key] = cleanSchema(value);
       }
     }
+    
+    // Inject a string fallback type if a property lacks any type definition
+    // (e.g. for Pydantic 'Any' fields like value in FixedVariable)
+    if (newObj.title && !newObj.type && !newObj.anyOf && !newObj.$ref && !newObj.properties) {
+      newObj.type = "string";
+    }
+    
     return newObj;
   }
   return obj;
 }
 
-const cleanedSchema = stripNullTypes(rawSchema);
+const cleanedSchema = cleanSchema(rawSchema);
 const { $defs, ...restSchema } = cleanedSchema;
+
+// Override the title to prevent 'VariableGenerationConfig' from displaying
+restSchema.title = "Fauxreal Config";
 
 const schema = {
   type: "object",
+  title: "Fauxreal Config",
   $defs: $defs,
   properties: {
     fauxreal_config: restSchema
