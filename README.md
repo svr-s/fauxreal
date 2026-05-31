@@ -45,7 +45,7 @@ print(results["user_identity_payload"])
 # 3. Extract your Pandas DataFrame
 df = results["transactions_df"]
 ```
-*Note: If you omit the `targets` parameter, the engine will return the legacy tuple containing all variables: `(fixed, dynamic, transformed, composites, dataframes)`.*
+*Note: If you omit the `targets` parameter, the engine will return the legacy tuple containing all variables: `(fixed, dynamic (includes faker), transformed, composites, dataframes)`.*
 
 ### CLI Usage
 You can run the engine directly from your terminal and dynamically override any fixed variables at runtime using the `--override` flag. This is extremely useful for CI/CD pipelines!

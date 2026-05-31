@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fauxreal"
-version = "0.1.5"
+version = "0.1.6"
 description = "A powerful, declarative engine for generating dynamic, relational, and highly customizable fake datasets using a JSON schema."
 readme = "README.md"
 requires-python = ">=3.8"
