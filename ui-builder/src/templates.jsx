@@ -43,7 +43,7 @@ export const CustomObjectFieldTemplate = (props) => {
   const { title, properties, required, description, uiSchema, idSchema } = props;
   
   // Root doesn't need indentation
-  const isRoot = idSchema.$id === "root";
+  const isRoot = idSchema && idSchema.$id === "root";
   
   return (
     <div className={`${!isRoot ? 'ml-4 pl-4 border-l-2 border-[var(--color-border)] focus-within:border-[var(--color-primary)] transition-colors' : ''}`}>
