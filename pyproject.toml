@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fauxreal"
-version = "0.1.6"
-description = "A powerful, declarative engine for generating dynamic, relational, and highly customizable fake datasets using a JSON schema."
+version = "0.1.7"
+description = "A powerful, declarative fake data generation engine backed by Faker and Pandas"
 readme = "README.md"
 requires-python = ">=3.8"
 license = { text = "MIT" }
@@ -22,7 +22,8 @@ dependencies = [
     "faker>=10.0.0",
     "python-dateutil",
     "pyyaml>=6.0",
-    "json5>=0.9.0"
+    "json5>=0.9.0",
+    "pydantic>=2.0.0"
 ]
 
 [project.optional-dependencies]

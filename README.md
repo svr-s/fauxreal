@@ -9,6 +9,30 @@ A powerful, declarative synthetic data and API payload generation engine with re
 - **Deep Nesting**: Construct complex nested JSON payloads (Composites) by injecting previously generated variables into leaf nodes.
 - **Conditional Logic**: Evaluate mathematical and boolean `expression` statements against current variables to conditionally generate values (e.g. `If amount > 80, result = REVIEW`).
 - **Data Transforms**: Apply string transformations sequentially (padding, truncating, regex replacements) directly within the schema.
+- **Developer Experience (DX):** Full IDE Autocomplete support via JSON Schema and strictly validated configurations backed by Pydantic.
+- **CLI:** `fauxreal --config <file> [--override <k=v>] [--init]`
+
+## 🚀 Quick Start & Best Practices
+
+### 1. Generate an Example Config
+You don't need to memorize the schema! Run the following command to generate a heavily-commented "kitchen sink" example config in your current directory:
+```bash
+python -m fauxreal.cli --init
+```
+
+### 2. Enable IDE Autocomplete
+If you use VS Code or PyCharm, add the following line to the top of your JSON configuration file to get instant autocomplete, tooltips, and real-time validation for all Fauxreal settings:
+```json
+{
+  "$schema": "https://raw.githubusercontent.com/svr-s/fauxreal/main/fauxreal-schema.json",
+  "variable_generation_config": {
+    ...
+  }
+}
+```
+
+### 3. Explore the Cookbook
+We have built a collection of bite-sized examples demonstrating specific features (like basic Faker generation, Relational DataFrames, and Date Math). Check out the [`docs/cookbook/`](docs/cookbook/) folder for inspiration.
 
 ## Requirements
 - Python 3.8+

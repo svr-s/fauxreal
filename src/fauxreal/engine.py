@@ -1,6 +1,14 @@
 import json
 import json5
 import yaml
+
+try:
+    from pydantic import ValidationError
+    from .schema import FauxrealConfig
+    PYDANTIC_AVAILABLE = True
+except ImportError:
+    PYDANTIC_AVAILABLE = False
+    
 import os
 import random
 import uuid
@@ -77,11 +85,23 @@ def load_config(filepath):
                 data = json5.load(f)
             else:
                 data = json.load(f)
-                
+            
+            if PYDANTIC_AVAILABLE:
+                try:
+                    # Validate the raw data using Pydantic
+                    validated_model = FauxrealConfig(**data)
+                    return validated_model.variable_generation_config.model_dump(exclude_none=True, by_alias=True)
+                except ValidationError as ve:
+                    logging.error(f"Configuration Validation Error in {filepath}:\n{ve}")
+                    raise
+            
             return data.get("variable_generation_config", {})
     except FileNotFoundError:
         logging.error(f"Configuration file not found: {filepath}")
         return {}
+    except ValidationError:
+        # Re-raise ValidationError so user gets strict feedback
+        raise
     except Exception as e:
         logging.error(f"Unexpected error loading config {filepath}: {e}")
         return {}

@@ -1,0 +1,86 @@
+{
+    "$schema": "https://raw.githubusercontent.com/svr-s/fauxreal/main/fauxreal-schema.json",
+    variable_generation_config: {
+        description: "Auto-generated example configuration for Fauxreal",
+        seed: 12345,
+        fixed_variables: [
+            {
+                name: "environment",
+                type: "string",
+                value: "development"
+            }
+        ],
+        faker_variables: [
+            {
+                name: "customer_email",
+                provider: "email"
+            }
+        ],
+        dynamic_variables: [
+            {
+                name: "age",
+                type: "int",
+                generation_rules: {
+                    min: 18,
+                    max: 65
+                }
+            }
+        ],
+        transformations: [
+            {
+                name: "formatted_age",
+                source: "age",
+                actions: [
+                    {
+                        action: "cast_to_string"
+                    },
+                    {
+                        action: "append",
+                        value: " years old"
+                    }
+                ]
+            }
+        ],
+        composite_variables: [
+            {
+                name: "user_payload",
+                type: "dict",
+                schema: {
+                    email: {
+                        ref: "customer_email"
+                    },
+                    age: {
+                        ref: "formatted_age"
+                    }
+                }
+            }
+        ],
+        dataframes: [
+            {
+                name: "users_df",
+                num_rows: 10,
+                columns: [
+                    {
+                        name: "env",
+                        ref: "environment"
+                    },
+                    {
+                        name: "email",
+                        ref: "customer_email"
+                    },
+                    {
+                        name: "age_desc",
+                        ref: "formatted_age"
+                    }
+                ]
+            }
+        ],
+        exports: [
+            {
+                type: "csv",
+                source: "users_df",
+                filepath: "users_output.csv"
+            }
+        ]
+    }
+}

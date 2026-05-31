@@ -1,0 +1,531 @@
+{
+    "$defs": {
+        "CompositeVariable": {
+            "properties": {
+                "name": {
+                    "description": "The name of the composite variable to store",
+                    "title": "Name",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "The structure type ('dict' or 'list')",
+                    "title": "Type",
+                    "type": "string"
+                },
+                "fields": {
+                    "anyOf": [
+                        {
+                            "additionalProperties": true,
+                            "type": "object"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The dictionary structure containing variable references",
+                    "title": "Fields"
+                },
+                "items": {
+                    "anyOf": [
+                        {
+                            "items": {},
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The list structure containing variable references",
+                    "title": "Items"
+                }
+            },
+            "required": [
+                "name",
+                "type"
+            ],
+            "title": "CompositeVariable",
+            "type": "object"
+        },
+        "DataFrameColumn": {
+            "properties": {
+                "name": {
+                    "description": "The resulting column name in the DataFrame",
+                    "title": "Name",
+                    "type": "string"
+                },
+                "ref": {
+                    "description": "The generated variable name to sample from",
+                    "title": "Ref",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "ref"
+            ],
+            "title": "DataFrameColumn",
+            "type": "object"
+        },
+        "DataFrameDefinition": {
+            "properties": {
+                "name": {
+                    "description": "The name of the DataFrame to store",
+                    "title": "Name",
+                    "type": "string"
+                },
+                "count": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Number of rows to generate (alias for num_rows)",
+                    "title": "Count"
+                },
+                "num_rows": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Number of rows to generate",
+                    "title": "Num Rows"
+                },
+                "columns": {
+                    "description": "List of columns mapping to generated variables",
+                    "items": {
+                        "$ref": "#/$defs/DataFrameColumn"
+                    },
+                    "title": "Columns",
+                    "type": "array"
+                },
+                "unique_combinations": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "additionalProperties": true,
+                                "type": "object"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Cross-join combinations of fixed variables to seed the DataFrame",
+                    "title": "Unique Combinations"
+                }
+            },
+            "required": [
+                "name"
+            ],
+            "title": "DataFrameDefinition",
+            "type": "object"
+        },
+        "DynamicVariable": {
+            "properties": {
+                "name": {
+                    "description": "The name of the variable to store",
+                    "title": "Name",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "The dynamic type (int, float, string, list, dict, date, date_range, choice, conditional, foreign_key, template)",
+                    "title": "Type",
+                    "type": "string"
+                },
+                "generation_rules": {
+                    "additionalProperties": true,
+                    "description": "Rules governing the generation of this variable",
+                    "title": "Generation Rules",
+                    "type": "object"
+                }
+            },
+            "required": [
+                "name",
+                "type"
+            ],
+            "title": "DynamicVariable",
+            "type": "object"
+        },
+        "ExportDefinition": {
+            "properties": {
+                "type": {
+                    "default": "csv",
+                    "description": "The export format ('csv', 'parquet', 'json')",
+                    "title": "Type",
+                    "type": "string"
+                },
+                "ref": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The variable/DataFrame name to export (alias for source)",
+                    "title": "Ref"
+                },
+                "source": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The variable/DataFrame name to export",
+                    "title": "Source"
+                },
+                "filepath": {
+                    "description": "The destination file path",
+                    "title": "Filepath",
+                    "type": "string"
+                },
+                "indent": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": 4,
+                    "description": "JSON indentation level",
+                    "title": "Indent"
+                }
+            },
+            "required": [
+                "filepath"
+            ],
+            "title": "ExportDefinition",
+            "type": "object"
+        },
+        "FakerVariable": {
+            "properties": {
+                "name": {
+                    "description": "The name of the variable to store",
+                    "title": "Name",
+                    "type": "string"
+                },
+                "provider": {
+                    "description": "The Faker provider method name (e.g. email, name, pyint)",
+                    "title": "Provider",
+                    "type": "string"
+                },
+                "kwargs": {
+                    "anyOf": [
+                        {
+                            "additionalProperties": true,
+                            "type": "object"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "Optional keyword arguments passed to the Faker provider",
+                    "title": "Kwargs"
+                }
+            },
+            "required": [
+                "name",
+                "provider"
+            ],
+            "title": "FakerVariable",
+            "type": "object"
+        },
+        "FixedVariable": {
+            "properties": {
+                "name": {
+                    "description": "The name of the variable to store",
+                    "title": "Name",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "The data type (string, int, float, boolean, list, dict, date)",
+                    "title": "Type",
+                    "type": "string"
+                },
+                "value": {
+                    "description": "The static value to assign",
+                    "title": "Value"
+                }
+            },
+            "required": [
+                "name",
+                "type",
+                "value"
+            ],
+            "title": "FixedVariable",
+            "type": "object"
+        },
+        "Transformation": {
+            "properties": {
+                "target": {
+                    "description": "The name of the generated variable to transform",
+                    "title": "Target",
+                    "type": "string"
+                },
+                "actions": {
+                    "description": "List of actions to apply sequentially",
+                    "items": {
+                        "$ref": "#/$defs/TransformationAction"
+                    },
+                    "title": "Actions",
+                    "type": "array"
+                }
+            },
+            "required": [
+                "target",
+                "actions"
+            ],
+            "title": "Transformation",
+            "type": "object"
+        },
+        "TransformationAction": {
+            "additionalProperties": true,
+            "properties": {
+                "action": {
+                    "description": "The transformation action to perform (e.g. pad, truncate, replace, cast_to_string)",
+                    "title": "Action",
+                    "type": "string"
+                },
+                "length": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "Length"
+                },
+                "pad_char": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "Pad Char"
+                },
+                "direction": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "Direction"
+                },
+                "old": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "Old"
+                },
+                "new": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "New"
+                },
+                "format": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "Format"
+                }
+            },
+            "required": [
+                "action"
+            ],
+            "title": "TransformationAction",
+            "type": "object"
+        },
+        "VariableGenerationConfig": {
+            "properties": {
+                "description": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Optional description of the configuration",
+                    "title": "Description"
+                },
+                "seed": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Random seed for reproducibility",
+                    "title": "Seed"
+                },
+                "fixed_variables": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "$ref": "#/$defs/FixedVariable"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "title": "Fixed Variables"
+                },
+                "faker_variables": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "$ref": "#/$defs/FakerVariable"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "title": "Faker Variables"
+                },
+                "dynamic_variables": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "$ref": "#/$defs/DynamicVariable"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "title": "Dynamic Variables"
+                },
+                "transformations": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "$ref": "#/$defs/Transformation"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "title": "Transformations"
+                },
+                "composite_variables": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "$ref": "#/$defs/CompositeVariable"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "title": "Composite Variables"
+                },
+                "dataframes": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "$ref": "#/$defs/DataFrameDefinition"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "title": "Dataframes"
+                },
+                "exports": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "$ref": "#/$defs/ExportDefinition"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "title": "Exports"
+                }
+            },
+            "title": "VariableGenerationConfig",
+            "type": "object"
+        }
+    },
+    "properties": {
+        "variable_generation_config": {
+            "$ref": "#/$defs/VariableGenerationConfig",
+            "description": "The root configuration block"
+        }
+    },
+    "required": [
+        "variable_generation_config"
+    ],
+    "title": "FauxrealConfig",
+    "type": "object"
+}

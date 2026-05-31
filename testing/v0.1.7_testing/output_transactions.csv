@@ -1,0 +1,16 @@
+env,date,id,customer_name,account_category,receipt,customer_email,status,amount
+US,2026-05-25,2cd24383-e97e-409f-bd56-e3fb47f3316d,Brian Yang,Millennial,Receipt for Brian Yang: A transaction of $68.88 USD was SUCCESS in the production environment.,johnsonjoshua@example.org,SUCCESS,14.36 USD
+US,2026-05-26,71f58cd0-5889-4c00-b0cb-fb1f230a2f36,Brian Yang,Boomer,Receipt for Brian Yang: A transaction of $68.88 USD was PENDING in the production environment.,johnsonjoshua@example.org,PENDING,60.66 USD
+US,2026-05-27,c6aaf6cb-47ea-4040-b6dc-f7256200a53e,Brian Yang,Boomer,Receipt for Brian Yang: A transaction of $68.88 USD was PENDING in the production environment.,johnsonjoshua@example.org,PENDING,64.35 USD
+US,2026-05-28,87016ac1-e009-4720-98b6-c3f0fcf88681,Brian Yang,Boomer,Receipt for Brian Yang: A transaction of $68.88 USD was PENDING in the production environment.,johnsonjoshua@example.org,PENDING,79.85 USD
+US,2026-05-29,7c9eb2f9-5e67-4a8c-9a99-718ba352d379,Brian Yang,GenX,Receipt for Brian Yang: A transaction of $68.88 USD was PENDING in the production environment.,johnsonjoshua@example.org,PENDING,54.58 USD
+EU,2026-05-25,67810b4d-73d6-46c6-acc8-035ba75e52ae,Brian Yang,GenX,Receipt for Brian Yang: A transaction of $68.88 USD was PENDING in the production environment.,johnsonjoshua@example.org,PENDING,63.77 USD
+EU,2026-05-26,7c60a9a4-12d4-48a1-99ce-ed430b72eeaa,Brian Yang,Boomer,Receipt for Brian Yang: A transaction of $68.88 USD was PENDING in the production environment.,johnsonjoshua@example.org,PENDING,63.28 USD
+EU,2026-05-27,78d9c58a-fb7f-48cf-8d6b-69749f996ce8,Brian Yang,GenZ,Receipt for Brian Yang: A transaction of $68.88 USD was PENDING in the production environment.,johnsonjoshua@example.org,PENDING,50.05 USD
+EU,2026-05-28,75e924b1-6c24-4cf5-a11a-6d017c56fdfa,Brian Yang,Boomer,Receipt for Brian Yang: A transaction of $68.88 USD was PENDING in the production environment.,johnsonjoshua@example.org,PENDING,77.08 USD
+EU,2026-05-29,3f468d98-c75d-499d-b363-b386c1ef7af4,Brian Yang,GenZ,Receipt for Brian Yang: A transaction of $68.88 USD was SUCCESS in the production environment.,johnsonjoshua@example.org,SUCCESS,47.5 USD
+AP,2026-05-25,8de28c9f-b56e-4eeb-800f-8a0ae334dbf6,Brian Yang,Boomer,Receipt for Brian Yang: A transaction of $68.88 USD was SUCCESS in the production environment.,johnsonjoshua@example.org,SUCCESS,44.46 USD
+AP,2026-05-26,c97cf2a9-a9e2-4804-a03b-e6af3ae6474b,Brian Yang,Boomer,Receipt for Brian Yang: A transaction of $68.88 USD was SUCCESS in the production environment.,johnsonjoshua@example.org,SUCCESS,47.5 USD
+AP,2026-05-27,6c70bb80-4d48-4ece-a439-786b25857f84,Brian Yang,Boomer,Receipt for Brian Yang: A transaction of $68.88 USD was PENDING in the production environment.,johnsonjoshua@example.org,PENDING,51.7 USD
+AP,2026-05-28,eaec11c7-30a7-4519-b0fa-9d40b9f7cf5e,Brian Yang,Boomer,Receipt for Brian Yang: A transaction of $68.88 USD was SUCCESS in the production environment.,johnsonjoshua@example.org,SUCCESS,24.5 USD
+AP,2026-05-29,24a34e7c-f3d6-427e-9b92-75f2ef167e85,Brian Yang,Boomer,Receipt for Brian Yang: A transaction of $68.88 USD was SUCCESS in the production environment.,johnsonjoshua@example.org,SUCCESS,38.8 USD
