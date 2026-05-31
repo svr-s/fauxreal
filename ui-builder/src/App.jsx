@@ -10,11 +10,13 @@ import validator from '@rjsf/validator-ajv8';
 import rawSchema from './schema.json';
 
 // We want to construct the outer payload {"variable_generation_config": ...}
-// Our schema describes the inner object, so we wrap it.
+const { $defs, ...restSchema } = rawSchema;
+
 const schema = {
   type: "object",
+  $defs: $defs,
   properties: {
-    variable_generation_config: rawSchema
+    variable_generation_config: restSchema
   },
   required: ["variable_generation_config"]
 };
