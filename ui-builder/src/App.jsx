@@ -39,8 +39,14 @@ function cleanSchema(obj) {
   return obj;
 }
 
-const cleanedSchema = cleanSchema(rawSchema);
-const { $defs, ...restSchema } = cleanedSchema;
+const rawSchemaStr = JSON.stringify(rawSchema).replace(/#\/\$defs\//g, '#/definitions/');
+const rawSchemaFixed = JSON.parse(rawSchemaStr);
+
+const cleanedSchema = cleanSchema(rawSchemaFixed);
+const { $defs, definitions, ...restSchema } = cleanedSchema;
+
+// Use either $defs or definitions depending on what the schema object has after parsing
+const actualDefs = definitions || $defs || {};
 
 // Override the title to prevent 'VariableGenerationConfig' from displaying
 restSchema.title = "Fauxreal Config";
@@ -48,7 +54,7 @@ restSchema.title = "Fauxreal Config";
 const schema = {
   type: "object",
   title: "Fauxreal Config",
-  $defs: $defs,
+  definitions: actualDefs,
   properties: {
     fauxreal_config: restSchema
   },

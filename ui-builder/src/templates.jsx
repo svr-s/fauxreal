@@ -19,7 +19,6 @@ export const CustomFieldTemplate = (props) => {
     return (
       <div className={classNames}>
         {children}
-        {errors}
         {help}
       </div>
     );
@@ -52,7 +51,6 @@ export const CustomFieldTemplate = (props) => {
             {description}
           </div>
         )}
-        {errors}
         {help}
       </div>
     </div>
